@@ -15,7 +15,7 @@ import com.gt_enterprise.auth_service.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;        
+    private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;
@@ -27,8 +27,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
-        return ResponseEntity.ok(authService.authenticate(authenticationRequest));
-    } 
-    
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest authenticationRequest) {
+        return ResponseEntity.ok(authService.login(authenticationRequest));
+    }
+
 }

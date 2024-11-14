@@ -3,6 +3,8 @@ package com.gt_enterprise.auth_service.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +26,7 @@ public class JwtUtils {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -34,9 +36,14 @@ public class JwtUtils {
     }
 
     // Validate JWT token
-    public boolean validateToken(String token, String username) {
-        final String tokenUsername = getUsernameFromToken(token);
-        return (tokenUsername.equals(username) && !isTokenExpired(token));
+    public boolean validateToken(String token) {
+        Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes())) // Use the same secret key used for signing the
+                                                                         // token
+                .build()
+                .parseClaimsJws(token); // Parse the token with the key
+
+        return !isTokenExpired(token);
     }
 
     // Check if the token is expired
@@ -53,10 +60,10 @@ public class JwtUtils {
 
     // Extract all claims from the token
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
+            return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 }
-
