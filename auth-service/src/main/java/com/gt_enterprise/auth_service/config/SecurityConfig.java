@@ -58,7 +58,7 @@ public class SecurityConfig {
                                                                                                              // is
                                                                                                              // created.
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Indicates
-                                                                                                       // thatthe JWT
+                                                                                                       // that the JWT
                                                                                                        // filter is
                                                                                                        // positioned
                                                                                                        // before the
